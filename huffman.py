@@ -202,3 +202,4 @@ if __name__ == "__main__":
     print ("The content of the encoded data is: {}\n".format(decoded_data))
 
 
+# The computation complexity of both encoding and decoding functions is O(n) due to the loops over the input data.
