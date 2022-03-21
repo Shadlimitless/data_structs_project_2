@@ -1,5 +1,4 @@
 import sys
-from turtle import left
 
 #helper Node class for storing character and freq
 class Node:
