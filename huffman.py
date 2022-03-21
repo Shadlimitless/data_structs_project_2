@@ -6,7 +6,6 @@ class Node:
         self.data = data
         self.freq = 0
         self.huff_code = ""
-        self.index = -1
         self.left_child = None
         self.right_child = None
 
@@ -49,7 +48,7 @@ class Tree:
     def get_root(self):
         return self.root   
 
-    # Tree method that calculates the binary code for each character, and returns a dictionary with index , node pairs so that I can easily access them in order
+    # Tree method that calculates the binary code for each character, and returns a dictionary with index , node pairs so that I can easily access them later
     def generate_binarycodes(self):
         data_dict = dict()
         def _generate_binarycodes(node, encoding):
@@ -122,15 +121,10 @@ def huffman_encoding(data):
     if data is None:
         return None
     data_list = NodeList()
-    index_list = list()
     #Create ordered lists of the chars and their freq
     for chr in set(data):
         data_node = Node(chr)
         data_node.freq = data.count(chr)
-        idx = data.index(chr)
-        data_node.index = idx
-        # Creating a list of the first index of each char so that I can create the encoding in right order
-        index_list.append(idx)
         data_list.add(data_node)
     print("first: {}".format(data_list))
     while True:
@@ -157,8 +151,6 @@ def huffman_encoding(data):
     # Call tree method that calculates binary code for each letter
     data_dict = tree.generate_binarycodes()
     # Finally generate the full binary code for the whole string
-        # sort the index list so as to be able to create the encoding in correct order      
-    index_list.sort()
     encoding = ""
     for chr in data:
         node = data_dict[chr]
@@ -175,7 +167,7 @@ def huffman_decoding(data, tree):
             child_node = node.get_left_child()
         else:
             child_node = node.get_right_child()
-        # If it doesnt have child its a leaf node, hence get the data, else move to the child
+        # If it doesnt have children its a leaf node, hence get the data, else move to the child
         if not child_node.has_left_child() and not child_node.has_right_child():
             decoded_list.append(child_node.data)
             node = tree.get_root()
