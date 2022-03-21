@@ -1,10 +1,13 @@
 import sys
+from turtle import left
 
 #helper Node class for storing character and freq
 class Node:
     def __init__(self, data=None):
         self.data = data
         self.freq = 0
+        self.huff_code = ""
+        self.index = -1
         self.left_child = None
         self.right_child = None
 
@@ -26,48 +29,50 @@ class Node:
     def has_left_child(self):
         return self.left_child != None
 
+    def set_binary_code(self, code):
+        print(code)
+        if self.huff_code is None:
+            self.huff_code = code
+        else:
+            self.huff_code += code
+
+    def __repr__(self):
+        return str(self.data)+ ", "+str(self.freq)+", "+self.huff_code
+        pass
+
     
-#helper TreeNode class for construction of the tree
-class TreeNode(Node):
-    def __init__(self, freq_sum=None):
-        self.freq = freq_sum
-
-
-
-    
+ 
 
 class Tree:
     def __init__(self, value=None):
         self.root = value
 
     def get_root(self):
-        return self.root
+        return self.root   
 
+    # Tree method that calculates the binary code for each character, and returns a dictionary with index , node pairs so that I can easily access them in order
     def generate_binarycodes(self):
+        data_dict = dict()
         def _generate_binarycodes(node, encoding):
-            if node is None:
-                return ""
+            if not node.has_left_child() and not node.has_right_child():
+                node.set_binary_code(encoding)
+                data_dict[node.index] = node
+                # print("{} {} {} {}".format(node.data, node.freq, node.huff_code, calculated_code))
+                return 
             if node.has_left_child():
                 print('pass left')
-                encoding = _generate_binarycodes(node.get_left_child(), encoding)
-                if encoding is None:
-                    encoding = "0"
-                else:
-                    encoding += "0"
+                _generate_binarycodes(node.get_left_child(), encoding = encoding + "0")
             if node.has_right_child():
                 print('pass right')
-                print("1")
-                encoding = _generate_binarycodes(node.get_right_child(), encoding)
-                if encoding is None:
-                    encoding = "1"
-                else:
-                    encoding += "1"
-                            
+                _generate_binarycodes(node.get_right_child(), encoding = encoding + "1")
+            
+        
+                                        
         encoding = str()
         root = self.get_root()
         _generate_binarycodes(root, encoding)
-        print("The encoding is {}".format(encoding))
-        return encoding
+        print("The encoding is {}".format(data_dict))
+        return data_dict
 
 #Helper class to store the nodes in a list thats following an order like prio queue
 class NodeList:
@@ -88,11 +93,16 @@ class NodeList:
                     return
             self.arr.append(node)
 
-    def reinsert(self, node, idx=None):
+    # Method used to reinsert nodes with summed up frequency
+    def reinsert(self, first_node, second_node, idx=None):
+        new_node = Node()
+        new_node.freq = first_node.freq + second_node.freq
+        new_node.set_left_child(first_node)
+        new_node.set_right_child(second_node)
         if idx is None:
-            self.arr.append(node)
+            self.arr.append(new_node)
         else:
-            self.arr.insert(idx, node)
+            self.arr.insert(idx, new_node)
 
     def pop(self, idx=None):
         if idx is None:
@@ -104,11 +114,7 @@ class NodeList:
         pr_str = ''
         for idx, node in enumerate(self.arr):
             pr_str += '---node at index {}---\n'.format(idx)
-            if type(node) == Node:
-                pr_str += node.data + '---'+ str(node.freq) + '\n'
-            else:
-                pr_str += '-----'+str(node.freq)+'----\n'
-            pr_str += '---------------------\n'
+            pr_str += '-----'+str(node.data)+"---"+str(node.freq)+'--'+str(node.huff_code)+'\n'
         return pr_str
 
 
@@ -116,52 +122,75 @@ class NodeList:
 def huffman_encoding(data):
     if data is None:
         return None
-    data_cased = data.lower()
     data_list = NodeList()
+    index_list = list()
     #Create ordered lists of the chars and their freq
-    for chr in set(data_cased):
+    for chr in set(data):
         data_node = Node(chr)
-        data_node.freq = data_cased.count(chr)
+        data_node.freq = data.count(chr)
+        idx = data.index(chr)
+        data_node.index = idx
+        # Creating a list of the first index of each char so that I can create the encoding in right order
+        index_list.append(idx)
         data_list.add(data_node)
-    #Create tree for generating binary code
-    print(data_list)
+    print("first: {}".format(data_list))
     while True:
         # Need to know if i'm remaining with last two items in list with uncombined sums
         if data_list.size()>3:
-            first = data_list.pop(0)
-            second = data_list.pop(0)
-            sum = first.freq + second.freq
-            new_node = TreeNode(sum)
-            new_node.set_left_child(first)
-            new_node.set_right_child(second)
-            data_list.reinsert(new_node, 0)
+            first_node = data_list.pop(0)
+            second_node = data_list.pop(0)
+            data_list.reinsert(first_node, second_node, 0)
         else:
-            second = data_list.pop()
-            first = data_list.pop()
-            sum = first.freq + second.freq
-            new_node = TreeNode(sum)
-            new_node.set_left_child(first)
-            new_node.set_right_child(second)
-            data_list.reinsert(new_node)
+            second_node = data_list.pop()
+            first_node = data_list.pop()
+            data_list.reinsert(first_node, second_node)
             break
 
     # Get the calculated nodes and use them to create root
     left_child = data_list.pop(0)
     right_child = data_list.pop(0)
-    root_node = TreeNode(left_child.freq + right_child.freq)
+    root_node = Node()
+    root_node.freq = left_child.freq + right_child.freq
     root_node.set_left_child(left_child)
     root_node.set_right_child(right_child)
     tree = Tree(root_node)
-    
-    return tree.generate_binarycodes(), tree
+    print("Here: {}".format(data_list))
+    # Call tree method that calculates binary code for each letter
+    data_dict = tree.generate_binarycodes()
+    # Finally generate the full binary code for the whole string
+        # sort the index list so as to be able to create the encoding in correct order      
+    index_list.sort()
+    encoding = ""
+    for idx in index_list:
+        print(idx)
+        node = data_dict[idx]
+        calc_binary = node.freq*node.huff_code
+        encoding = encoding + calc_binary
+    return encoding, tree
     pass
 
 def huffman_decoding(data, tree):
+    decoded_list = []
+    # Initialise node variable to be used in bit loop to get the characters
+    node = tree.get_root()
+    for bit in data:
+        if bit == "0":
+            child_node = node.get_left_child()
+        else:
+            child_node = node.get_right_child()
+        # If it doesnt have child its a leaf node, hence get the data, else move to the child
+        if not child_node.has_left_child() and not child_node.has_right_child():
+            decoded_list.append(child_node.data)
+            node = tree.get_root()
+        else:
+            node = child_node
+    print(decoded_list)      
+    return "".join(decoded_list)
     pass
 
 if __name__ == "__main__":
     codes = {}
-    a_great_sentence = "AAAAAAABBBCCCCCCCDDEEEEEE"
+    a_great_sentence = "There is the tree"
 
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print("The content of the data is: {}\n".format(a_great_sentence))
