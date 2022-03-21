@@ -55,7 +55,7 @@ class Tree:
         def _generate_binarycodes(node, encoding):
             if not node.has_left_child() and not node.has_right_child():
                 node.set_binary_code(encoding)
-                data_dict[node.index] = node
+                data_dict[node.data] = node
                 # print("{} {} {} {}".format(node.data, node.freq, node.huff_code, calculated_code))
                 return 
             if node.has_left_child():
@@ -160,11 +160,9 @@ def huffman_encoding(data):
         # sort the index list so as to be able to create the encoding in correct order      
     index_list.sort()
     encoding = ""
-    for idx in index_list:
-        print(idx)
-        node = data_dict[idx]
-        calc_binary = node.freq*node.huff_code
-        encoding = encoding + calc_binary
+    for chr in data:
+        node = data_dict[chr]
+        encoding = encoding + node.huff_code
     return encoding, tree
     pass
 
@@ -189,7 +187,7 @@ def huffman_decoding(data, tree):
 
 if __name__ == "__main__":
     codes = {}
-    a_great_sentence = "AAAAAAABBBCCCCCCCDDEEEEEE"
+    a_great_sentence = "There is a tree"
 
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print("The content of the data is: {}\n".format(a_great_sentence))
