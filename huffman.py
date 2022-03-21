@@ -190,7 +190,7 @@ def huffman_decoding(data, tree):
 
 if __name__ == "__main__":
     codes = {}
-    a_great_sentence = "There is the tree"
+    a_great_sentence = "AAAAAAABBBCCCCCCCDDEEEEEE"
 
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print("The content of the data is: {}\n".format(a_great_sentence))
