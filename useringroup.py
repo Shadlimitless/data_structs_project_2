@@ -54,4 +54,4 @@ sub_child.add_user(sub_child_user)
 child.add_group(sub_child)
 parent.add_group(child)
 counter = 5
-print(is_user_in_group("sd", parent))
+print(is_user_in_group("sub_child_user", parent))
