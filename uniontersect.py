@@ -43,11 +43,11 @@ class LinkedList:
 
 def union(llist_1, llist_2):
     # In union we need to find all unique elements in both linked lists
+    # Flat is better than nested (Zen of python) . The computation time complexity here is O(n)
     list1_node = llist_1.head
     list2_node = llist_2.head
     # Using set so as to have only unique values
     union_set = set()
-    # Flat is better than nested (Zen of python) . The computation time complexity here is O(n)
     while list1_node:
         union_set.add(list1_node.value)
         list1_node = list1_node.next
@@ -63,6 +63,7 @@ def union(llist_1, llist_2):
 def intersection(llist_1, llist_2):
     # Your Solution Here
     # In intersection we need to find elements only in both of them
+    # Computation time complexity here is O(n) as the input size affects due to the loops
     list1_node = llist_1.head
     list2_node = llist_2.head
     intersection_set = set()
@@ -70,7 +71,15 @@ def intersection(llist_1, llist_2):
         intersection_set.add(list1_node.value)
         list1_node = list1_node.next
     inters_ls = list(intersection_set)
-    # TODO calculate intersect in the second list and leave only those elements in some data structure
+    result_set = set()
+    while list2_node:
+        if list2_node.value in inters_ls:
+            result_set.add(list2_node.value)
+        list2_node = list2_node.next
+    result = LinkedList()
+    for item in result_set:
+        result.append(item)    
+    return result
     pass
 
 
