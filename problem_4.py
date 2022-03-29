@@ -1,7 +1,3 @@
-from pickle import TRUE
-from turtle import pos
-
-
 class Group(object):
     def __init__(self, _name):
         self.name = _name
