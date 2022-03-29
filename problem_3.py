@@ -39,9 +39,6 @@ class Node:
         return str(self.data)+ ", "+str(self.freq)+", "+self.huff_code
         pass
 
-    
- 
-
 class Tree:
     def __init__(self, value=None):
         self.root = value
@@ -63,10 +60,7 @@ class Tree:
                 _generate_binarycodes(node.get_left_child(), encoding = encoding + "0")
             if node.has_right_child():
                 print('pass right')
-                _generate_binarycodes(node.get_right_child(), encoding = encoding + "1")
-            
-        
-                                        
+                _generate_binarycodes(node.get_right_child(), encoding = encoding + "1")                                        
         encoding = str()
         root = self.get_root()
         _generate_binarycodes(root, encoding)
