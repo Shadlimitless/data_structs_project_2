@@ -51,7 +51,14 @@ sub_child = Group("subchild")
 sub_child_user = "sub_child_user"
 sub_child.add_user(sub_child_user)
 
+child_user = "child_user"
 child.add_group(sub_child)
+child.add_user(child_user)
 parent.add_group(child)
-counter = 5
+
 print(is_user_in_group("sub_child_user", parent))
+# Will print True
+print(is_user_in_group("child_user", parent))
+# Will print True
+print(is_user_in_group("eeee", parent))
+# Will print False

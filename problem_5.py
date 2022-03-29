@@ -58,9 +58,7 @@ chain.put("my temp")
 chain.put("another one")
 chain.put("last one")
 print(chain)
-
-# The computational time complexity here is O(1) , constant time cause we are always adding new blocks to the head, hence size of input does not affect the time complexity
-
+# Expected output is each block, starting with the last one since its last to get in
 
 
     

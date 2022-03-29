@@ -70,10 +70,9 @@ def intersection(llist_1, llist_2):
     while list1_node:
         intersection_set.add(list1_node.value)
         list1_node = list1_node.next
-    inters_ls = list(intersection_set)
     result_set = set()
     while list2_node:
-        if list2_node.value in inters_ls:
+        if list2_node.value in intersection_set:
             result_set.add(list2_node.value)
         list2_node = list2_node.next
     result = LinkedList()
@@ -116,4 +115,5 @@ for i in element_2:
 
 print (union(linked_list_3,linked_list_4))
 print (intersection(linked_list_3,linked_list_4))
+# Will not print anything since there is no elements both in list 3 and list 4
 
