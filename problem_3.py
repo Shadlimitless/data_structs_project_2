@@ -1,6 +1,7 @@
 import sys
 
 #helper Node class for storing character and freq
+
 class Node:
     def __init__(self, data=None):
         self.data = data
