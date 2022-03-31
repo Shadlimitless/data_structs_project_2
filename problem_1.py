@@ -27,7 +27,7 @@ class LRU_Cache(object):
                 return head.value
             head = head.next
         return -1
-        pass
+
 
     def set(self, key, value):
         # Set the value if the key is not present in the cache. If the cache is at capacity remove the oldest item. 

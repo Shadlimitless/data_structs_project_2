@@ -1,3 +1,5 @@
+from base64 import encode
+from logging import root
 import sys
 
 #helper Node class for storing character and freq
@@ -29,7 +31,7 @@ class Node:
         return self.left_child != None
 
     def set_binary_code(self, code):
-        print(code)
+        # print(code)
         if self.huff_code is None:
             self.huff_code = code
         else:
@@ -37,7 +39,7 @@ class Node:
 
     def __repr__(self):
         return str(self.data)+ ", "+str(self.freq)+", "+self.huff_code
-        pass
+
 
 class Tree:
     def __init__(self, value=None):
@@ -53,18 +55,17 @@ class Tree:
             if not node.has_left_child() and not node.has_right_child():
                 node.set_binary_code(encoding)
                 data_dict[node.data] = node
-                # print("{} {} {} {}".format(node.data, node.freq, node.huff_code, calculated_code))
                 return 
             if node.has_left_child():
-                print('pass left')
+                # print('pass left')
                 _generate_binarycodes(node.get_left_child(), encoding = encoding + "0")
             if node.has_right_child():
-                print('pass right')
+                # print('pass right')
                 _generate_binarycodes(node.get_right_child(), encoding = encoding + "1")                                        
         encoding = str()
         root = self.get_root()
         _generate_binarycodes(root, encoding)
-        print("The encoding is {}".format(data_dict))
+        # print("The encoding is {}".format(data_dict))
         return data_dict
 
 #Helper class to store the nodes in a list thats following an order like prio queue
@@ -113,36 +114,43 @@ class NodeList:
 
 
 def huffman_encoding(data):
-    if data is None:
-        return None
+    if data is None or len(data) == 0:
+        return -1, -1
     data_list = NodeList()
     #Create ordered lists of the chars and their freq
     for chr in set(data):
         data_node = Node(chr)
         data_node.freq = data.count(chr)
         data_list.add(data_node)
-    print("first: {}".format(data_list))
-    while True:
-        # Need to know if i'm remaining with last two items in list with uncombined sums
-        if data_list.size()>3:
-            first_node = data_list.pop(0)
-            second_node = data_list.pop(0)
-            data_list.reinsert(first_node, second_node, 0)
-        else:
-            second_node = data_list.pop()
-            first_node = data_list.pop()
-            data_list.reinsert(first_node, second_node)
-            break
-
-    # Get the calculated nodes and use them to create root
-    left_child = data_list.pop(0)
-    right_child = data_list.pop(0)
+    # print("first: {}".format(data_list))
+    # Initialising root node
     root_node = Node()
-    root_node.freq = left_child.freq + right_child.freq
-    root_node.set_left_child(left_child)
-    root_node.set_right_child(right_child)
+    # If there was only one letter then the data_list will have only one node in it and the loop to sum up the nodes will break
+    if data_list.size() > 1:
+        while True:
+            # Need to know if i'm remaining with last two items in list with uncombined sums
+            if data_list.size()>3:
+                first_node = data_list.pop(0)
+                second_node = data_list.pop(0)
+                data_list.reinsert(first_node, second_node, 0)
+            else:
+                second_node = data_list.pop()
+                first_node = data_list.pop()
+                data_list.reinsert(first_node, second_node)
+                break
+
+        # Get the calculated nodes and use them to create root
+        left_child = data_list.pop(0)
+        right_child = data_list.pop(0)
+        root_node.freq = left_child.freq + right_child.freq
+        root_node.set_left_child(left_child)
+        root_node.set_right_child(right_child)
+    else:
+        left_child = data_list.pop()
+        root_node.freq = left_child.freq
+        root_node.set_left_child(left_child) 
     tree = Tree(root_node)
-    print("Here: {}".format(data_list))
+    # print("Here: {}".format(data_list))
     # Call tree method that calculates binary code for each letter
     data_dict = tree.generate_binarycodes()
     # Finally generate the full binary code for the whole string
@@ -151,7 +159,7 @@ def huffman_encoding(data):
         node = data_dict[chr]
         encoding = encoding + node.huff_code
     return encoding, tree
-    pass
+
 
 def huffman_decoding(data, tree):
     decoded_list = []
@@ -168,25 +176,34 @@ def huffman_decoding(data, tree):
             node = tree.get_root()
         else:
             node = child_node
-    print(decoded_list)      
+    # print(decoded_list)      
     return "".join(decoded_list)
-    pass
+
+
+
+
+def test_func(data):
+    encoded_data, tree = huffman_encoding(data)
+    if encoded_data == -1:
+        print("No data to encode!")
+    else:
+        print("The size of the data is: {}\n".format(sys.getsizeof(data)))
+        print("The content of the data is: {}\n".format(a_great_sentence))
+        print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
+        print("The content of the encoded data is: {}\n".format(encoded_data))
+
+        decoded_data = huffman_decoding(encoded_data, tree)
+        print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
+        print("The content of the encoded data that has been decoded is: {}\n".format(decoded_data))
+
+
 
 if __name__ == "__main__":
-    codes = {}
+    # Test normal scenario
     a_great_sentence = "There is a tree"
-
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    print("The content of the data is: {}\n".format(a_great_sentence))
-    encoded_data, tree = huffman_encoding(a_great_sentence)
-
-    print ("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
-    print ("The content of the encoded data is: {}\n".format(encoded_data))
-
-    decoded_data = huffman_decoding(encoded_data, tree)
-
-    print ("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
-    print ("The content of the encoded data is: {}\n".format(decoded_data))
-
-
-# The computation complexity of both encoding and decoding functions is O(n) due to the loops over the input data.
+    test_func(a_great_sentence)
+    # Test edge case with same letter
+    a_great_sentence = "AAAAAAA"
+    test_func(a_great_sentence)
+    # Test edge case with empty str/data
+    test_func("")
