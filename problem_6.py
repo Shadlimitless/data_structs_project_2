@@ -117,3 +117,12 @@ print (union(linked_list_3,linked_list_4))
 print (intersection(linked_list_3,linked_list_4))
 # Will not print anything since there is no elements both in list 3 and list 4
 
+# Edge case with one empty linkedList
+print("Edge case one empty set")
+print(union(LinkedList(), linked_list_2))
+print(intersection(linked_list_empty, linked_list_2))
+
+# Edge case with both empty sets
+print("Edge case all empty sets")
+print(union(LinkedList(), LinkedList()))
+print(intersection(LinkedList(), LinkedList()))
