@@ -24,15 +24,21 @@ class LRU_Cache(object):
         while head is not None:
             if head.key == key:
                 self.queue.pop(0)
-                return head.value
+                value = head.value
+                # Set the value again back in cache to get it later if needed
+                self.set(key, value)
+                return value
             head = head.next
         return -1
 
 
     def set(self, key, value):
         # Set the value if the key is not present in the cache. If the cache is at capacity remove the oldest item. 
+        if not isinstance(key, int) or not isinstance(value, int):
+            return "key {} and value {} must be integers".format(key, value)
+        if key < 0:
+            return "key should not be a negative integer"
         hash_index = self.get_hash_code(key)
-        self.num_entries += 1
         # Find the head element at the index in case there is already a linkedlist there with key,value pairs
         if self.num_entries > self.capacity:
             least_used = self.queue.pop(0)
@@ -50,10 +56,12 @@ class LRU_Cache(object):
         head = self.cache[hash_index]
         new_node.next = head
         self.cache[hash_index] = new_node
+        # Moved count of entries to last place so that its increased only when there is new element in cache
+        self.num_entries += 1
         pass
 
     def remove_least_used(self, key):
-        print(key)
+        # print(key)
         hash_index = self.get_hash_code(key)
         head = self.cache[hash_index]
         while head is not None:
@@ -90,3 +98,13 @@ our_cache.set(6, 6)
 print(our_cache.get(3)) 
 # returns -1 since 3 is the least used cache element  
 
+# Edge case adding null value to cache
+print(our_cache.set(None, None))
+
+# Edge case with a negative key 
+print(our_cache.set(-1, 7))
+
+# Edge case getting the same value three times
+print(our_cache.get(5)) 
+print(our_cache.get(5)) 
+print(our_cache.get(5)) 
