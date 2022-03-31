@@ -26,6 +26,9 @@ class Blockchain:
         self.head = None
 
     def put(self, data):
+        if len(data) == 0:
+            print("Cannot create a block with empty data")
+            return 
         new_block = Block(datetime.datetime.now(), data, 0)
         if self.head is None:
             self.head = new_block
@@ -57,6 +60,7 @@ chain = Blockchain()
 chain.put("my temp")
 chain.put("another one")
 chain.put("last one")
+chain.put("")
 print(chain)
 # Expected output is each block, starting with the last one since its last to get in
 

@@ -35,9 +35,11 @@ class LRU_Cache(object):
     def set(self, key, value):
         # Set the value if the key is not present in the cache. If the cache is at capacity remove the oldest item. 
         if not isinstance(key, int) or not isinstance(value, int):
-            return "key {} and value {} must be integers".format(key, value)
+            print("key {} and value {} must be integers".format(key, value))
+            return 
         if key < 0:
-            return "key should not be a negative integer"
+            print("key should not be a negative integer")
+            return 
         hash_index = self.get_hash_code(key)
         # Find the head element at the index in case there is already a linkedlist there with key,value pairs
         if self.num_entries > self.capacity:
@@ -58,7 +60,6 @@ class LRU_Cache(object):
         self.cache[hash_index] = new_node
         # Moved count of entries to last place so that its increased only when there is new element in cache
         self.num_entries += 1
-        pass
 
     def remove_least_used(self, key):
         # print(key)

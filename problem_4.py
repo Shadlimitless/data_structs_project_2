@@ -28,16 +28,23 @@ def is_user_in_group(user, group):
       user(str): user name/id
       group(class:Group): group to check user membership against
     """
-    user_ls = group.get_users()
-    if user in user_ls:
-        return True
-    # Logic to recursively check inner groups until user is reached
-    group_ls = group.get_groups()
-    for item in group_ls:
-        positive = is_user_in_group(user, item)  
-        if positive:
-            return positive              
-    return False
+    # Checking that the entry group is a parent
+    if group.name != "parent" or len(user) == 0:
+        return False
+    def _is_user_in_group(user, group):
+        user_ls = group.get_users()
+        # Base case in case it goes up to last group without finding the user
+        if not user in user_ls and len(group.get_groups()) == 0:
+            return False
+        if user in user_ls:
+            return True
+        else:
+            group_ls = group.get_groups()
+            for item in group_ls:
+                return _is_user_in_group(user, item)
+
+    return _is_user_in_group(user, group)
+
 
 
 parent = Group("parent")
@@ -53,8 +60,11 @@ child.add_user(child_user)
 parent.add_group(child)
 
 print(is_user_in_group("sub_child_user", parent))
-# Will print True
+# # Will print True
 print(is_user_in_group("child_user", parent))
-# Will print True
+# # Will print True
 print(is_user_in_group("eeee", parent))
-# Will print False
+# Will print False because child is not in group
+
+print(is_user_in_group("sub_child_user", child))
+# Will print false even though the child has the sub-child, they dont have a parent in this call
