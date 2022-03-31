@@ -3,6 +3,9 @@ import os
 def find_files(suffix, path):
     # Create an empty list container that will hold the results
     files_path = list()
+    if suffix != '.c' or not(os.path.isdir(path)):
+        return None
+    
     #inner recursive function 
     def _find_files(suffix, path):
         curr_directory = os.listdir(path)
@@ -19,4 +22,10 @@ def find_files(suffix, path):
     _find_files(suffix, path)
     return files_path
                      
+
+# will print list with correct files found  
 print(find_files('.c', '.'))
+# Will return None since the extension is incorrect
+print(find_files('.txt', '.'))
+# Will return None since the path is incorrect
+print(find_files('.c', 'path'))
